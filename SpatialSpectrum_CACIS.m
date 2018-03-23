@@ -27,9 +27,9 @@ Fc=[2*10^3:2*10^3/(N_Sig-1):5*10^3];   % frequencies of input sig
 T_Vector=(1:T)/f;  
 p_N = [0:M/p:M*(N-1)/p];   
 p_M = [0:N:(M-1)*N];
-P = union(p_N,p_M)                    % the positions of physical sensors
+P = union(p_N,p_M);                    % the positions of physical sensors
 
-A = zeros(length(P),N_Sig);           % manifold    
+A = zeros(length(P),N_Sig);            % manifold    
 SigVec = zeros(N_Sig,T);
 
 %% Generate the imping Sources
@@ -37,15 +37,14 @@ for Q = 1:N_Sig
         A(:,Q) = exp(-j*P'*2*pi*d*sin(DOA(Q)*pi/180)/lambda); 
         SigVec(Q,:) = exp(1j*2*pi*Fc(Q).*T_Vector);  
 end
-x0 = A*SigVec;            
-x = awgn(x0,SNR,'measured');      % Generate noises on Signals
+x0 = A*SigVec; 
+% Generate noises on Signals
+x = awgn(x0,SNR,'measured');          % Received data
 
-%% construct covariance matrix
-                                                                       
+%% construct covariance matrix                                                                  
 R = x*x'/T;                                                            
 z = R(:);       % vectorization: matrix--->vector
-row_num = extract_row1(P,M,N,p);
-z1 = z(row_num);
+z1 = CACIS_Sort(z,P,M,N,p);
 
 MM = M*N-M*(N-1)/p;
 Ri = zeros(MM,MM,MM);
