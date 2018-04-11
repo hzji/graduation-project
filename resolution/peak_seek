@@ -1,0 +1,21 @@
+function out=peak_seek(F,d)   
+   % 谱峰搜索函数   
+   % F 空间谱
+   % d 搜索角度范围
+jj=0;
+mm=1;
+temp=F(1);
+for ii=2:length(d)             %搜索谱峰，并记录谱峰角度
+    if temp<F(ii)
+        jj=1;
+    else
+        if jj==1 & temp>-20
+            peak(mm)=temp;
+            theta_doa(mm)=d(ii-1);
+            mm=mm+1;
+        end
+        jj=0;
+    end
+    temp=F(ii);
+end
+out(1,:)=theta_doa;            %输出谱峰角度
